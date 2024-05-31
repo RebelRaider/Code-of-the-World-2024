@@ -265,9 +265,6 @@ def clean_text(text: str) -> str:
     Examples:
     >>> clean_text('Пример    текста, с   лишними пробелами.')
     """
-    # Заменяем нежелательные символы на пробелы
-    text = re.sub(r"[^А-Яа-яЁё0-9 \s.,!?:;-]", " ", text)
-
     # Удаляем пробелы перед или после дефиса
     text = re.sub(r"-\s|\s-", "", text)
 
@@ -276,24 +273,12 @@ def clean_text(text: str) -> str:
 
     # Удаляем повторяющиеся знаки препинания
     text = re.sub(r"([.,!?:;-])([.,!?:;-])+", r"\1", text)
-    words_to_remove = [
-        "ЦЕНТРАЛЬНЫЙ БАНК",
-        "РОССИЙСКОЙ ФЕДЕРАЦИИ",
-        "БАНК РОССИИ",
-        "www.cbr.ru",
-        "495 771-91-00",
-        "8 800 300-30-00",
-        "Банк России",
-        "107016",
-        "Москва, ул. Неглинная, 12",
-        "Центральный банк",
-        "Российской Федерации",
-    ]
-    for word in words_to_remove:
-        text = text.replace(word, "")
 
-    # Заменяем последовательности пробелов на одиночные пробелы
-    text = re.sub(r"\s+", " ", text)
+    text = re.sub(r"\t", " ", text)
+    text = re.sub(r"\n+", "\n", text)
+    text = re.sub(r"[ ]+", " ", text)
+    text = re.sub(r"\n\s+", "\n", text)
+    text = re.sub(r"\0", "", text)
     return text
 
 

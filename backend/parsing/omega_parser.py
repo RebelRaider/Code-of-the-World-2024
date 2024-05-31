@@ -1,7 +1,6 @@
 # Объединение парсеров в один.
 
 # TODO: .doc
-# TODO: remove character filtering from pdf_parser (clean_text), because we need latin letters
 
 import collections
 from io import StringIO
@@ -60,7 +59,7 @@ def extract_text_from_markdown(path: os.PathLike) -> str:
 def extract_text_from_rtf(path: os.PathLike) -> str:
     with open(path) as f:
         text = rtf_to_text(f.read())
-        text = re.sub(r"\|", "", text)
+        text = re.sub(r"\|", " ", text)
         return text
 
 
@@ -89,7 +88,7 @@ def extract_text_from_docx(path: os.PathLike) -> str:
 def extract_text_from_docx_2(path: os.PathLike) -> str:
     document = docx.Document(path)
     text = "\n".join(paragraph.text for paragraph in document.paragraphs)
-    tables = "\n".join(" ".join(map(str, row.cells))
+    tables = "\n".join(" ".join(c.text() for c in row.cells)
                        for table in document.tables for row in table.rows)
 
     return f"{text}\n{tables}"
@@ -103,7 +102,7 @@ def extract_text_from_doc(path: os.PathLike) -> str:
 def extract_text_with_bs(source: str) -> str:
     soup = bs(source)
     [s.extract() for s in soup(["style", "script"])]
-    tmpText = soup.get_text(separator=" ")
+    tmpText = soup.get_text(separator="\n")
     return tmpText
 
 
@@ -134,9 +133,9 @@ def read_any_doc(path: os.PathLike) -> str:
                 # могут присутствовать артефакты
                 text = docx2txt2.extract_text(path)
     elif extention == ".doc":
-        try:
-            text = extract_text_from_doc(path)
-        except Exception as e:
+        text = extract_text_from_doc(path)
+
+        if text == '':
             text = docx2txt2.extract_text(path)
     else:
         with open(path, errors="ignore") as f:
