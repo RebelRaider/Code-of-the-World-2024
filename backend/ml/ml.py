@@ -1,5 +1,5 @@
 from addons import get_message_tokens #, txt2embeddings, search_results
-from SETTINGS import SYSTEM_PROMPT_HR, SYSTEM_PROMPT_HR_WITH_TEMPLATE, BOT_TOKEN, LINEBREAK_TOKEN #, TABLE_NAME, DEVICE
+from SETTINGS import SYSTEM_PROMPT_HR, SYSTEM_PROMPT_HR_WITH_TEMPLATE, BOT_TOKEN, LINEBREAK_TOKEN, PROMPT_HR_CONTEXT, PROMPT_HR_WITH_TEMPLATE_CONTEXT #, TABLE_NAME, DEVICE
 from llama_cpp import Llama
 
 def interact_hr(
@@ -42,10 +42,11 @@ def interact_hr(
     system_message = {"role": "system", "content": sys_prompt}
     tokens.extend(get_message_tokens(model, **system_message))
     # Получение токенов пользовательского сообщения
+    user_message = PROMPT_HR_CONTEXT.format(content)
     message_tokens = get_message_tokens(
         model=model,
         role="user",
-        content=content,
+        content=user_message,
     )
     token_str = ""
     role_tokens = [model.token_bos(), BOT_TOKEN, LINEBREAK_TOKEN]
@@ -109,9 +110,10 @@ def interact_hr_with_template(
     - Генерирует ответ на основе пользовательского запроса и возвращает его в виде строки.
     """
     tokens = []
-    sys_prompt = SYSTEM_PROMPT_HR_WITH_TEMPLATE.format(content)
+    sys_prompt = SYSTEM_PROMPT_HR_WITH_TEMPLATE.format(request)
     system_message = {"role": "system", "content": sys_prompt}
     tokens.extend(get_message_tokens(model, **system_message))
+    user_prompt = PROMPT_HR_WITH_TEMPLATE_CONTEXT.format(content)
     # Получение токенов пользовательского сообщения
     message_tokens = get_message_tokens(
         model=model,
