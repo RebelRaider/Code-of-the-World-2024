@@ -4,6 +4,7 @@
 
 import collections
 from io import StringIO
+import json
 import os
 from pathlib import Path
 import re
@@ -20,7 +21,7 @@ from striprtf.striprtf import rtf_to_text  # striprtf
 import pptx2txt2
 from pydocx import PyDocX
 
-from GigaPdfMiner import extract_text_from_pdf, clean_text
+from pdf_parser import extract_text_from_pdf, clean_text
 
 
 collections.Hashable = collections.abc.Hashable
@@ -141,3 +142,4 @@ def read_any_doc(path: os.PathLike) -> str:
         with open(path, errors="ignore") as f:
             text = extract_text_with_bs(f.read())
     return clean_text(text)
+
