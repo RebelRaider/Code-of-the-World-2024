@@ -1,5 +1,5 @@
-from addons import get_message_tokens  # , txt2embeddings, search_results
-from SETTINGS import (
+from ml.addons import get_message_tokens  # , txt2embeddings, search_results
+from ml.SETTINGS import (
     SYSTEM_PROMPT_HR,
     SYSTEM_PROMPT_HR_WITH_TEMPLATE,
     BOT_TOKEN,

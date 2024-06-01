@@ -24,6 +24,7 @@ from pydocx import PyDocX
 from pdf_parser import pdf_to_string, clean_text
 
 
+
 collections.Hashable = collections.abc.Hashable
 
 

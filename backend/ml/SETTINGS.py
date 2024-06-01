@@ -2,7 +2,7 @@ HOST = "ch_server"
 PORT = "8123"
 TABLE_NAME = "Data"
 DEVICE = "cuda"
-LLM_PATH = "models/model-q8_0.gguf"
+LLM_PATH = "ml/models/model-q8_0.gguf"
 
 SYSTEM_PROMPT_HR = """
 Вы выступаете в роли HR-менеджера. Ваша задача - обработать текст резюме и преобразовать его в JSON в следующем формате:

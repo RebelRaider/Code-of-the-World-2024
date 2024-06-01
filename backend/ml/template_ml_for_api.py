@@ -1,4 +1,4 @@
-from ml import interact_hr, interact_hr_with_template
+from ml.ml import interact_hr, interact_hr_with_template
 from llama_cpp import Llama
 
 from ml.init import llm_model
@@ -24,7 +24,7 @@ def template_for_upload_cv(path_to_temp_file: os.PathLike, model: Llama = llm_mo
 
 
 # Шаблон для API
-def template_rate_the_candidate(model: Llama, resume_from_db: str, template: str) -> str:
+def template_rate_the_candidate(resume_from_db: str, template: str, model: Llama = llm_model,) -> str:
     """
     шаблон для эндпоинта, который сравнивает резюме и шаблон и возвращает оценку по шаблону (json брат...)
 

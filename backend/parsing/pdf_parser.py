@@ -2,12 +2,12 @@ import re
 
 import pdfplumber
 
+
 def pdf_to_string(pdf_path):
     text = ""
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages:
             text += page.extract_text()
-    return text
 
 
 def clean_text(text: str) -> str:
