@@ -21,7 +21,7 @@ from striprtf.striprtf import rtf_to_text  # striprtf
 import pptx2txt2
 from pydocx import PyDocX
 
-from pdf_parser import extract_text_from_pdf, clean_text
+from pdf_parser import pdf_to_string, clean_text
 
 
 collections.Hashable = collections.abc.Hashable
@@ -117,7 +117,7 @@ def read_any_doc(path: os.PathLike) -> str:
     elif extention == ".md":
         text = extract_text_from_markdown(path)
     elif extention == ".pdf":
-        text = extract_text_from_pdf(path)
+        text = pdf_to_string(path)
     elif extention == ".rtf":
         text = extract_text_from_rtf(path)
     elif extention == ".pptx" or extention == ".odp":

@@ -65,17 +65,15 @@ def interact_hr(
     messages.append(system_message)
     messages.append(user_message)
     if is_llama:
-        for part in model.create_chat_completion(
-            messages,
-            temperature=temperature,
-            top_k=top_k,
-            top_p=top_p,
-            repeat_penalty=repeat_penalty,
-            stream=True,
-        ):
-            delta = part["choices"][0]["delta"]
-            if "content" in delta:
-                token_str += delta["content"]
+      response = model.create_chat_completion(
+        messages,
+        temperature=temperature,
+        top_k=top_k,
+        top_p=top_p,
+        repeat_penalty=repeat_penalty,
+        stream=False,
+    )
+      token_str = response["choices"][0]["message"]["content"]
     else:
         generator = model.generate(
             tokens,
@@ -151,17 +149,16 @@ def interact_hr_with_template(
     messages.append(user_message)
     
     if is_llama:
-        for part in model.create_chat_completion(
-            messages,
-            temperature=temperature,
-            top_k=top_k,
-            top_p=top_p,
-            repeat_penalty=repeat_penalty,
-            stream=True,
-        ):
-            delta = part["choices"][0]["delta"]
-            if "content" in delta:
-                token_str += delta["content"]
+      response = model.create_chat_completion(
+        messages,
+        temperature=temperature,
+        top_k=top_k,
+        top_p=top_p,
+        repeat_penalty=repeat_penalty,
+        stream=False,
+    )
+      token_str = response["choices"][0]["message"]["content"]
+
     else:
         generator = model.generate(
             tokens,
