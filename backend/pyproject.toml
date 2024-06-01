@@ -28,6 +28,7 @@ pytesseract = "^0.3.10"
 markdown = "^3.6"
 docx-parser = "^1.0.2"
 pdfminer-six = "^20231228"
+pymupdf = "^1.24.5"
 
 
 [build-system]
