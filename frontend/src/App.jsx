@@ -13,9 +13,41 @@ import axios from "axios";
 
 function App() {
     const fileInputRef = useRef(null);
-    const [serverResponse, setServerResponse] = useState(null);
+    const [serverResponse, setServerResponse] = useState([]);
 
     const data = {
+        "personal_info": {
+            "full_name": "Тестович Тест Тестович",
+            "age": "27 лет",
+            "birthdate": "31 марта 1997 года",
+            "location": "Москва",
+            "citizenship": "Россия",
+            "desired_position": "Системный аналитик",
+            "email": "",
+            "phone": "",
+            "linkedin": "",
+            "github": ""
+        },
+        "competence_profile": {
+            "skills": ["SQL", "UML", "HTML", "CSS", "JavaScript"],
+            "technologies": ["AutoCAD", "SolidWorks", "P-Cad", "MS Excel", "Bi", "Adobe Photoshop", "Adobe Flash"],
+            "languages": {
+                "Russian": "Родной",
+                "English": "Средний"
+            },
+            "education": [
+                {
+                    "institution": "Московский государственный технический университет им. Н.Э. Баумана, Москва",
+                    "degree": "Конструирование и технология электронных средств",
+                    "graduation_year": 2019
+                },
+                {
+                    "institution": "Московский государственный технический университет радиотехники, электроники и автоматики, Москва",
+                    "degree": "Инженер-конструктор",
+                    "graduation_year": 2021
+                }
+            ]
+        },
         "career_profile": [
             {
                 "company": "Вымпел, Группа компаний",
@@ -100,7 +132,7 @@ function App() {
         const formData = new FormData();
         formData.append('file', file);
         try {
-            const response = await axios.post('/your-server-endpoint', formData, {
+            const response = await axios.post('https://84.38.185.14.sslip.io/api/v1/person_data', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -206,9 +238,9 @@ function App() {
                         <input className={styles.Search} placeholder={'Search'}></input>
                     </div>
                     <div className={styles.TotalSummaries}>
-                        Total summaries: {summaries.length}
+                        Total summaries: {data.count}
                     </div>
-                    {summaries.length > 0 ? (
+                    {data.length > 0 ? (
                         summaries.map((summary, index) => (
                             <div key={index} className={styles.summaryItem}>
                                 <div className={styles.ContainerOfCandidate}>
