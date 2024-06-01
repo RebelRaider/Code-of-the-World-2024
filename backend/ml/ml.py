@@ -132,7 +132,7 @@ def interact_hr_with_template(
     - Генерирует ответ на основе пользовательского запроса и возвращает его в виде строки.
     """
 
-    sys_prompt = SYSTEM_PROMPT_HR_WITH_TEMPLATE.format(request)
+    sys_prompt = SYSTEM_PROMPT_HR_WITH_TEMPLATE + request
     user_message = PROMPT_HR_WITH_TEMPLATE_CONTEXT.format(content)
 
     system_message = {"role": "system", "content": sys_prompt}
