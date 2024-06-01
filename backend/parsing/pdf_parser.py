@@ -10,6 +10,7 @@ from pdf2image import convert_from_path
 from pdfminer.high_level import extract_pages
 from pdfminer.layout import LTComponent, LTFigure, LTTextContainer
 
+
 def text_extraction(element: LTTextContainer) -> Tuple[str, list]:
     """
     Извлекает текст из элемента на странице PDF.
