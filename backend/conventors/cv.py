@@ -28,19 +28,19 @@ def convert_personal_info(p_info: PersonalInfoSchema) -> PersonalInfo:
 
 
 def convert_skill(skill: str, competence_profile_id: uuid.UUID) -> Skill:
-    return Skill(id=uuid4(), competence=competence_profile_id, name=skill)
+    return Skill(id=uuid4(), competence_id=competence_profile_id, name=skill)
 
 
 def convert_technology(tech: str, competence_profile_id: uuid.UUID) -> Technology:
-    return Technology(id=uuid4(), competence=competence_profile_id, name=tech)
+    return Technology(id=uuid4(), competence_id=competence_profile_id, name=tech)
 
 
 def convert_language(lang: LanguageSchema, competence_profile_id: uuid.UUID) -> Language:
-    return Language(id=uuid4(), competence=competence_profile_id, name=lang.name, level=lang.level)
+    return Language(id=uuid4(), competence_id=competence_profile_id, name=lang.name, level=lang.level)
 
 
 def convert_education(edu: EducationSchema, competence_profile_id: uuid.UUID) -> Education:
-    return Education(id=uuid4(), competence=competence_profile_id, institution=edu.institution,
+    return Education(id=uuid4(), competence_id=competence_profile_id, institution=edu.institution,
                      degree=edu.degree, graduation_year=edu.graduation_year)
 
 
@@ -61,7 +61,7 @@ def convert_competence_profile(c_profile: CompetenceProfileSchema) -> Competence
 
 
 def convert_responsibility(responsibility: str, career_profile_id: uuid.UUID) -> Responsibility:
-    return Responsibility(id=uuid4(), profile=career_profile_id, name=responsibility)
+    return Responsibility(id=uuid4(), profile_id=career_profile_id, name=responsibility)
 
 
 def convert_career_profile(c_profile: CareerProfileSchema) -> CareerProfile:
@@ -93,5 +93,5 @@ def convert_cv(cv_schema: CVSchema, user_id: uuid.UUID) -> CV:
         personal_info=personal_info,
         competence_profile=competence_profile,
         career_profile=career_profile,
-        user=user_id,
+        # user=user_id,
     )

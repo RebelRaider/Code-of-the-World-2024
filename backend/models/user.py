@@ -5,6 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.BaseModel import EntityMeta
 from models.cv import CV
 
+
 class User(EntityMeta):
     __tablename__ = 'user'
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)

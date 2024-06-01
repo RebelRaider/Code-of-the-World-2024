@@ -14,11 +14,10 @@ router = APIRouter(prefix="/api/v1/cv", tags=["cv"])
 @router.post(
     "/upload",
     summary="загрузить cv",
+    response_model=CVSchema,
 )
 async def create_from_wb(
-    user: uuid.UUID,
     cv: UploadFile = File(...),
-    cv_service: CVService = Depends()
 ):
     with tempfile.NamedTemporaryFile() as temp_file:
         temp_file.write(cv.file.read())
@@ -33,5 +32,5 @@ async def create_from_wb(
 
         cv_schema = CVSchema(**answer)
 
-        cv_service.create(cv_schema, user)
+    return cv_schema
 

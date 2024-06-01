@@ -30,7 +30,7 @@ class LanguageSchema(BaseModel):
 class CompetenceProfileSchema(BaseModel):
     skills: List[str]
     technologies: List[str]
-    languages: List[LanguageSchema]
+    languages: dict
     education: List[EducationSchema]
 
 
