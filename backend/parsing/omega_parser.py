@@ -21,7 +21,7 @@ from striprtf.striprtf import rtf_to_text  # striprtf
 import pptx2txt2
 from pydocx import PyDocX
 
-from pdf_parser import extract_text_from_pdf, clean_text
+from parsing.pdf_parser import extract_text_from_pdf, clean_text
 
 
 collections.Hashable = collections.abc.Hashable
