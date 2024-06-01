@@ -15,6 +15,20 @@ This template provides a minimal setup to get React working in Vite with HMR and
    ```bash
    git clone https://github.com/Code-of-the-World-2024
 
+Перейдите в директорию проекта:
+
+cd frontend
+
+Установите зависимости:
+npm install
+
+
+Запуск проекта
+Запустите локальный сервер разработки:
+Копировать код
+npm run dev
+
+
 Скрипты npm
 В проекте доступны следующие скрипты:
 
