@@ -8,6 +8,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    volumes:
+      - ./ml/models:/app/ml/models
     command: >
       bash -c "alembic upgrade head && poetry run uvicorn app:app --host 0.0.0.0 --port 8000"
 

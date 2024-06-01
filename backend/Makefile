@@ -16,3 +16,6 @@ local:
 .PHONY: test
 test:
 	poetry run pytest
+
+.PHONY: download_models
+	cd ml/models && wget https://huggingface.co/IlyaGusev/saiga_llama3_8b_gguf/resolve/main/model-q8_0.gguf
