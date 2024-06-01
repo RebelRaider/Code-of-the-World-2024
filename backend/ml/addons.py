@@ -144,7 +144,7 @@
 
 
 from typing import List, Any
-from SETTINGS import ROLE_TOKENS, LINEBREAK_TOKEN
+from ml.SETTINGS import ROLE_TOKENS, LINEBREAK_TOKEN
 
 
 def get_message_tokens(model: Any, role: str, content: str) -> List[int]:
