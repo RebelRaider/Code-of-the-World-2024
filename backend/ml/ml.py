@@ -1,10 +1,19 @@
-from addons import get_message_tokens #, txt2embeddings, search_results
-from SETTINGS import SYSTEM_PROMPT_HR, SYSTEM_PROMPT_HR_WITH_TEMPLATE, BOT_TOKEN, LINEBREAK_TOKEN, PROMPT_HR_CONTEXT, PROMPT_HR_WITH_TEMPLATE_CONTEXT #, TABLE_NAME, DEVICE
+from addons import get_message_tokens  # , txt2embeddings, search_results
+from SETTINGS import (
+    SYSTEM_PROMPT_HR,
+    SYSTEM_PROMPT_HR_WITH_TEMPLATE,
+    BOT_TOKEN,
+    LINEBREAK_TOKEN,
+    PROMPT_HR_CONTEXT,
+    PROMPT_HR_WITH_TEMPLATE_CONTEXT,
+)  # , TABLE_NAME, DEVICE
 from llama_cpp import Llama
+
 
 def interact_hr(
     model: Llama,
     content: str,
+    is_llama: bool,
     top_k: int = 30,
     top_p: float = 0.9,
     temperature: float = 0.6,
@@ -37,46 +46,61 @@ def interact_hr(
     - Задает параметры генерации, такие как ограничения токенов, температура и штраф за повторения.
     - Генерирует ответ на основе пользовательского запроса и возвращает его в виде строки.
     """
-    tokens = []
+
     sys_prompt = SYSTEM_PROMPT_HR
-    system_message = {"role": "system", "content": sys_prompt}
-    tokens.extend(get_message_tokens(model, **system_message))
-    # Получение токенов пользовательского сообщения
     user_message = PROMPT_HR_CONTEXT.format(content)
-    message_tokens = get_message_tokens(
-        model=model,
-        role="user",
-        content=user_message,
-    )
+
+    system_message = {"role": "system", "content": sys_prompt}
+    user_message = {"role": "user", "content": user_message}
+
+    # Для Mistral
+    tokens = []
+    tokens.extend(get_message_tokens(model, **system_message))
+    tokens.extend(get_message_tokens(model, **user_message))
+    tokens.extend([model.token_bos(), BOT_TOKEN, LINEBREAK_TOKEN])
     token_str = ""
-    role_tokens = [model.token_bos(), BOT_TOKEN, LINEBREAK_TOKEN]
-    tokens += message_tokens + role_tokens
 
-    # Генерация ответа на основе токенов
-    generator = model.generate(
-        tokens,
-        top_k=top_k,
-        top_p=top_p,
-        temp=temperature,
-        repeat_penalty=repeat_penalty,
-    )
+    # Для Llama 3
+    messages = []
+    messages.append(system_message)
+    messages.append(user_message)
+    if is_llama:
+        for part in model.create_chat_completion(
+            messages,
+            temperature=temperature,
+            top_k=top_k,
+            top_p=top_p,
+            repeat_penalty=repeat_penalty,
+            stream=True,
+        ):
+            delta = part["choices"][0]["delta"]
+            if "content" in delta:
+                token_str += delta["content"]
+    else:
+        generator = model.generate(
+            tokens,
+            top_k=top_k,
+            top_p=top_p,
+            temp=temperature,
+            repeat_penalty=repeat_penalty,
+        )
 
-    # Преобразование токенов в строку
-    for token in generator:
-        token_str += model.detokenize([token]).decode("utf-8", errors="ignore")
-        tokens.append(token)
+        # Преобразование токенов в строку
+        for token in generator:
+            token_str += model.detokenize([token]).decode("utf-8", errors="ignore")
+            tokens.append(token)
 
-        if token == model.token_eos():
-            break
+            if token == model.token_eos():
+                break
 
     return token_str
-
 
 
 def interact_hr_with_template(
     model: Llama,
     request: str,
     content: str,
+    is_llama: bool,
     top_k: int = 30,
     top_p: float = 0.9,
     temperature: float = 0.6,
@@ -109,37 +133,51 @@ def interact_hr_with_template(
     - Задает параметры генерации, такие как ограничения токенов, температура и штраф за повторения.
     - Генерирует ответ на основе пользовательского запроса и возвращает его в виде строки.
     """
-    tokens = []
+
     sys_prompt = SYSTEM_PROMPT_HR_WITH_TEMPLATE.format(request)
+    user_message = PROMPT_HR_WITH_TEMPLATE_CONTEXT.format(content)
+
     system_message = {"role": "system", "content": sys_prompt}
+    user_message = {"role": "user", "content": user_message}
+    tokens = []
     tokens.extend(get_message_tokens(model, **system_message))
-    user_prompt = PROMPT_HR_WITH_TEMPLATE_CONTEXT.format(content)
-    # Получение токенов пользовательского сообщения
-    message_tokens = get_message_tokens(
-        model=model,
-        role="user",
-        content=request,
-    )
+    tokens.extend(get_message_tokens(model, **user_message))
+    tokens.extend([model.token_bos(), BOT_TOKEN, LINEBREAK_TOKEN])
     token_str = ""
-    role_tokens = [model.token_bos(), BOT_TOKEN, LINEBREAK_TOKEN]
-    tokens += message_tokens + role_tokens
 
-    # Генерация ответа на основе токенов
-    generator = model.generate(
-        tokens,
-        top_k=top_k,
-        top_p=top_p,
-        temp=temperature,
-        repeat_penalty=repeat_penalty,
-    )
+    # Для Llama 3
+    messages = []
+    messages.append(system_message)
+    messages.append(user_message)
+    
+    if is_llama:
+        for part in model.create_chat_completion(
+            messages,
+            temperature=temperature,
+            top_k=top_k,
+            top_p=top_p,
+            repeat_penalty=repeat_penalty,
+            stream=True,
+        ):
+            delta = part["choices"][0]["delta"]
+            if "content" in delta:
+                token_str += delta["content"]
+    else:
+        generator = model.generate(
+            tokens,
+            top_k=top_k,
+            top_p=top_p,
+            temp=temperature,
+            repeat_penalty=repeat_penalty,
+        )
 
-    # Преобразование токенов в строку
-    for token in generator:
-        token_str += model.detokenize([token]).decode("utf-8", errors="ignore")
-        tokens.append(token)
+        # Преобразование токенов в строку
+        for token in generator:
+            token_str += model.detokenize([token]).decode("utf-8", errors="ignore")
+            tokens.append(token)
 
-        if token == model.token_eos():
-            break
+            if token == model.token_eos():
+                break
 
     return token_str
 
