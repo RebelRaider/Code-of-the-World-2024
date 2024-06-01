@@ -13,6 +13,7 @@ loguru = "^0.7.0"
 ruff = "^0.3.7"
 pre-commit = "^3.7.0"
 llama-cpp-python = "^0.2.76"
+psycopg2-binary = "^2.9.9"
 
 
 [build-system]

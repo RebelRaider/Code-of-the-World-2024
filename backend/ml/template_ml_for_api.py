@@ -1,9 +1,13 @@
 from ml import interact_hr, interact_hr_with_template
 from llama_cpp import Llama
+
+from ml.init import llm_model
 from parsing.omega_parser import read_any_doc
 import os
+
+
 # Шаблон для API
-def template_for_upload_cv(model: Llama, path_to_temp_file: os.PathLike) -> str:
+def template_for_upload_cv(path_to_temp_file: os.PathLike, model: Llama = llm_model,) -> str:
     """
     Функция для обработки резюме и вытягивания данных в строку (json???) (json кста не напиздел)
 
@@ -32,5 +36,6 @@ def template_rate_the_candidate(model: Llama, resume_from_db: str, template: str
     Returns:
         str: оценка кандидата по шаблону
     """
-    answer = interact_hr_with_template(model=model, content=resume_from_db, request=template) # По шаблону получаем оценку по критериям (template) кандидата
+    answer = interact_hr_with_template(model=model, content=resume_from_db,
+                                       request=template)  # По шаблону получаем оценку по критериям (template) кандидата
     return answer
