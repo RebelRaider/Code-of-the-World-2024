@@ -19,7 +19,7 @@ def template_for_upload_cv(path_to_temp_file: os.PathLike, model: Llama = llm_mo
         str: ответ от модели (json???) парсинга резюме по шаблону (json кста не напиздел)
     """
     resume = read_any_doc(path_to_temp_file)
-    answer = interact_hr(model=model, content=resume)
+    answer = interact_hr(model=model, content=resume, is_llama=True)
     return answer
 
 
@@ -37,5 +37,5 @@ def template_rate_the_candidate(resume_from_db: str, template: str, model: Llama
         str: оценка кандидата по шаблону
     """
     answer = interact_hr_with_template(model=model, content=resume_from_db,
-                                       request=template)  # По шаблону получаем оценку по критериям (template) кандидата
+                                       request=template, is_llama=True)  # По шаблону получаем оценку по критериям (template) кандидата
     return answer

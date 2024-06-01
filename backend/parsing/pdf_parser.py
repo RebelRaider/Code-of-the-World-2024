@@ -10,18 +10,6 @@ from pdf2image import convert_from_path
 from pdfminer.high_level import extract_pages
 from pdfminer.layout import LTComponent, LTFigure, LTTextContainer
 
-
-#TODO: интегрировать эту парсилку вместо pytesseract ибо она быстрее и круче и ваще молодежно использовать cdef функции
-from tesserocr import PyTessBaseAPI
-
-def process_image(image):
-    api = PyTessBaseAPI(lang='rus+eng')
-    api.SetImage(image)
-    text = api.GetUTF8Text()
-    api.End()
-    return text
-
-
 def text_extraction(element: LTTextContainer) -> Tuple[str, list]:
     """
     Извлекает текст из элемента на странице PDF.
@@ -341,76 +329,12 @@ def extract_text_from_pdf(pdf_path: str) -> str:
                     line_text = text_extraction(element)
                     pages_content.append(line_text)
 
-                # if isinstance(element, LTFigure):
-                #     # Обрезаем изображение и извлекаем текст
-                #     image_text = crop_convert_and_extract_text(element, pdf_path, pagenum)
-                #     page_content.append(image_text)
+                if isinstance(element, LTFigure):
+                    # Обрезаем изображение и извлекаем текст
+                    image_text = crop_convert_and_extract_text(element, pdf_path, pagenum)
+                    pages_content.append(image_text)
 
     # Объединяем текст со всех страниц и очищаем его
     text = "".join("".join(page_content) for page_content in pages_content)
     text = clean_text(text)
-    if not is_broken_text(text):  # Проверяем текст на целостность
-        return text
-    else:
-        return ""
-
-
-if __name__ == "__main__":
-    import time
-
-    # Чтение данных из файла JSON
-    with open("server/RAG/data_recovered.json", "r", encoding="utf-8") as file:
-        data = json.load(file)
-
-    new_data = []  # Список для хранения успешно обработанных данных
-    bad_data = []  # Список для хранения данных с ошибками
-    so_so_data = []
-
-    # Итерация по элементам данных
-    start_time = time.time()
-    for item in data:
-        iteration_start_time = time.time()
-        try:
-            if "text" in item:
-                item["file_type"] = "text_from_site"
-                item["text"] = clean_text(item["text"])
-                if is_broken_text(item["text"]):
-                    item["text"] = ""
-
-            else:
-                # Извлечение текста из PDF файла
-                item["text"] = extract_text_from_pdf(
-                    f'server/RAG/recovered_data/{item.get("file_name")}'
-                )
-            del item["error"]  # Удаляем поле error
-
-            # Если текст успешно извлечен
-            if item["text"] != "":
-                print(
-                    f"Успешно обработан файл {item.get('id')} Время итерации: {(time.time() - iteration_start_time):.2f} сек, Общее время: {time.time()-start_time:.2f} сек",
-                    end="\r",
-                )
-                new_data.append(item)  # Добавляем элемент в список успешных данных
-            else:
-                print(
-                    f"Плохой файл {item.get('id')} Время итерации: {(time.time() - iteration_start_time):.2f} сек, Общее время: {time.time()-start_time:.2f} сек",
-                    end="\r",
-                )
-                so_so_data.append(item)
-        except Exception as e:
-            item["error"] = str(e)  # Добавляем информацию об ошибке в элемент данных
-            bad_data.append(item)  # Добавляем элемент в список данных с ошибками
-            print(
-                f"Ошибка при обработке файла {item['id']}:{e} Время итерации: {iteration_start_time - start_time:.2f} сек, Общее время: {time.time()-start_time:.2f} сек'"
-            )  # Выводим информацию об ошибке
-
-    # Запись успешно обработанных данных в файл JSON
-    with open("server/RAG/data_text_true_recovered.json", "w", encoding="utf-8") as file:
-        json.dump(new_data, file, ensure_ascii=False, indent=1)
-
-    # Запись данных с ошибками в файл JSON
-    with open("server/RAG/data_text_false_recovered.json", "w", encoding="utf-8") as file:
-        json.dump(bad_data, file, ensure_ascii=False, indent=1)
-
-    with open("server/RAG/data_text_so_so_recovered.json", "w", encoding="utf-8") as file:
-        json.dump(so_so_data, file, ensure_ascii=False, indent=1)
+    return text
