@@ -45,3 +45,4 @@ class CVSchema(BaseModel):
     personal_info: PersonalInfoSchema
     competence_profile: CompetenceProfileSchema
     career_profile: List[CareerProfileSchema]
+    score: str | None = None
