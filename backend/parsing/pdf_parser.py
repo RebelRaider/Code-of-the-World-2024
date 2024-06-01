@@ -1,13 +1,14 @@
 import re
 
-import pdfplumber
-
+import fitz  # PyMuPDF
 
 def pdf_to_string(pdf_path):
     text = ""
-    with pdfplumber.open(pdf_path) as pdf:
-        for page in pdf.pages:
-            text += page.extract_text()
+    with fitz.open(pdf_path) as pdf:
+        for page_num in range(pdf.page_count):
+            page = pdf[page_num]
+            text += page.get_text("text")
+    return text
 
 
 def clean_text(text: str) -> str:
