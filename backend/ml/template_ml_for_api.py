@@ -1,4 +1,4 @@
-from ml import interact_hr, interact_hr_with_template
+from ml.ml import interact_hr, interact_hr_with_template
 from llama_cpp import Llama
 
 from ml.init import llm_model
